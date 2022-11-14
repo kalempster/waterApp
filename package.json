@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "link": "react-native link"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
@@ -25,6 +26,7 @@
     "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "^3.18.2",
     "react-native-splash-screen": "^3.3.0",
+    "react-native-system-setting": "^1.7.6",
     "react-native-vector-icons": "^9.2.0",
     "react-navigation": "^4.4.4",
     "react-navigation-transitions": "^1.0.12"
