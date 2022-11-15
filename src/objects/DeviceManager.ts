@@ -64,7 +64,7 @@ export class DeviceManager {
         }
 
         let deviceArray = (JSON.parse(devices) as Device[]);
-        deviceArray = deviceArray.filter((d) => d.name != device.name && d.number != device.number);
+        deviceArray = deviceArray.filter((d) => d.name != device.name || d.number != device.number);
         await this.setDevices(deviceArray);
         deviceEmitter.emit("deviceRemove", device);
     }

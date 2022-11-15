@@ -1,8 +1,9 @@
 
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Vibration } from "react-native";
+import React, { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from "react";
+import { View, StyleSheet, Dimensions, Vibration, ScrollView } from "react-native";
 import { List, IconButton, FAB, Dialog, Button, TextInput, Portal, Text, Divider, ActivityIndicator, Menu } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RootStackParamList } from "../App";
 import { useKeyboard } from "../hooks/useKeyboard";
 import { Device } from "../objects/Device";
@@ -17,7 +18,14 @@ const Devices: FC<Props> = ({ navigation, route }) => {
     const keyboardHeight = useKeyboard();
     const [devices, setDevices] = useState<Device[]>([]);
 
+    const insets = useSafeAreaInsets();
+
     useEffect(() => {
+        (async () => {
+            console.log(await DeviceManager.getDevices());
+            setDevices(await DeviceManager.getDevices());
+        })();
+
         const deviceAddSub = deviceEmitter.addListener("deviceAdd", async () => {
             console.log(await DeviceManager.getDevices());
             setDevices(await DeviceManager.getDevices());
@@ -52,10 +60,12 @@ const Devices: FC<Props> = ({ navigation, route }) => {
         <View style={{ paddingBottom: keyboardHeight, height: "100%" }}>
 
             <View ref={ref} style={styles.parent}>
-                <List.Section style={{ width: "100%" }} >
-                    {listDevices(devices, handleElementPressed, navigation)}
-                </List.Section>
-                <FAB icon={"plus"} style={styles.fab} onPress={() => navigation.navigate("AddDevice")} />
+                <ScrollView>
+                    <List.Section style={{ width: "100%" }} >
+                        {listDevices(devices, handleElementPressed, navigation)}
+                    </List.Section>
+                </ScrollView>
+                <FAB icon={"plus"} style={{ ...styles.fab, bottom: insets.bottom, right: insets.right }} onPress={() => navigation.navigate("AddDevice")} />
 
             </View>
         </View>
@@ -76,12 +86,12 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: "absolute",
-        margin: 32,
+        margin: 16,
         right: 0,
         bottom: 0,
     },
 
-})
+});
 
 export default Devices;
 
@@ -92,6 +102,9 @@ function listDevices(devices: Device[], handleElementPressed: (deviceObject: Dev
     const [currentDevice, setCurrentDevice] = useState<Device>();
     return <>
         <Menu
+            style={{
+                width: 196
+            }}
             onDismiss={() => setDeleteMenu(false)}
             visible={deleteMenu}
             anchor={{ x: anchorX, y: anchorY }}>
