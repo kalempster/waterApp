@@ -54,7 +54,8 @@ public class MainActivity extends ReactActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean isDarkMode = true; // Customize this to match your app's default theme
+        boolean isDarkMode = true;
+         // Customize this to match your app's default theme
         ImmersiveBars.changeBarColors(this, isDarkMode); // here
         super.onCreate(null);
     }

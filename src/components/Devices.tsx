@@ -1,14 +1,14 @@
 
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Vibration, ScrollView } from "react-native";
-import { List, IconButton, FAB, Dialog, Button, TextInput, Portal, Text, Divider, ActivityIndicator, Menu } from "react-native-paper";
+import { FC, useEffect, useRef, useState } from "react";
+import { View, StyleSheet, Vibration, ScrollView } from "react-native";
+import { List, IconButton, FAB, Divider, Menu } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RootStackParamList } from "../App";
 import { useKeyboard } from "../hooks/useKeyboard";
 import { Device } from "../objects/Device";
 import { DeviceManager } from "../objects/DeviceManager";
-import { deviceEmitter } from "../objects/Emitter";
+import { deviceEmitter } from "../objects/DeviceEmitter";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -42,17 +42,21 @@ const Devices: FC<Props> = ({ navigation, route }) => {
         });
 
 
+        const deviceFlushSub = deviceEmitter.addListener("devicesFlush", async () => {
+            console.log(await DeviceManager.getDevices());
+            setDevices(await DeviceManager.getDevices());
+        });
+
+
         return () => {
             deviceAddSub.remove();
             deviceEditSub.remove();
             deviceDeleteSub.remove();
+            deviceFlushSub.remove();
         };
     }, []);
 
-    const handleElementPressed = (deviceObject: Device) => {
-        console.log(deviceObject.name);
 
-    }
     const ref = useRef<View>(null);
 
 
@@ -62,7 +66,7 @@ const Devices: FC<Props> = ({ navigation, route }) => {
             <View ref={ref} style={styles.parent}>
                 <ScrollView>
                     <List.Section style={{ width: "100%" }} >
-                        {listDevices(devices, handleElementPressed, navigation)}
+                        {listDevices(devices,  navigation)}
                     </List.Section>
                 </ScrollView>
                 <FAB icon={"plus"} style={{ ...styles.fab, bottom: insets.bottom, right: insets.right }} onPress={() => navigation.navigate("AddDevice")} />
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
 
 export default Devices;
 
-function listDevices(devices: Device[], handleElementPressed: (deviceObject: Device) => void, navigation: NativeStackNavigationProp<RootStackParamList>) {
+function listDevices(devices: Device[], navigation: NativeStackNavigationProp<RootStackParamList>) {
     const [anchorX, setAnchorX] = useState(0);
     const [anchorY, setAnchorY] = useState(0);
     const [deleteMenu, setDeleteMenu] = useState(false);
@@ -119,7 +123,7 @@ function listDevices(devices: Device[], handleElementPressed: (deviceObject: Dev
 
                     <List.Item
                         descriptionNumberOfLines={1}
-                        onPress={() => handleElementPressed(d)}
+                        onPress={() => navigation.navigate("DeviceInfo", {device: d})}
                         title={d.name}
                         description={d.number}
                         left={props => <List.Icon {...{ ...props, style: { alignSelf: "center", "marginLeft": 16, "marginRight": 0 } }} icon="sim" />}

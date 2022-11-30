@@ -1,23 +1,20 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Image, KeyboardAvoidingView } from "react-native";
-import { TextInput } from "react-native-paper";
-import { Props, RootStackParamList } from "../App";
+import { Menu, TextInput } from "react-native-paper";
+import { Props } from "../App";
 import { Appbar, IconButton } from 'react-native-paper';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "../objects/Device";
 import { DeviceManager } from "../objects/DeviceManager";
+//@ts-ignore
 
-type EditDeviceProps = NativeStackScreenProps<RootStackParamList, "EditDevice">;
 
 const AddDevice = ({ navigation, route }: Props) => {
 
     const insets = useSafeAreaInsets();
-    
+
     const [deviceName, setDeviceName] = useState("");
     const [deviceNumber, setDeviceNumber] = useState("");
-
-
     return (
         <>
             <Appbar style={{ height: insets.top + 56, display: "flex", justifyContent: "space-between", alignItems: "center" }} safeAreaInsets={{ top: insets.top }}>
@@ -37,7 +34,6 @@ const AddDevice = ({ navigation, route }: Props) => {
             }}>
                 <TextInput mode="outlined" label={"Name"} value={deviceName} onChangeText={(t) => setDeviceName(t)} style={{ backgroundColor: "#EFEFEF", marginVertical: 10 }} />
                 <TextInput mode="outlined" label={"Number"} value={deviceNumber} onChangeText={(t) => setDeviceNumber(t)} style={{ backgroundColor: "#EFEFEF", marginVertical: 10 }} />
-
             </KeyboardAvoidingView>
         </>
     )

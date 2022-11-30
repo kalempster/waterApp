@@ -1,19 +1,15 @@
-import { DeviceType } from "../enums/DeviceType";
+import { Input } from "./Input";
 
 export class Device {
     name: string = "";
     number: string = "";
-    deviceType: DeviceType = DeviceType.ONE_INPUT;
+    inputs : Input[] = [];
+    
 
-
-    constructor(name?: string, number?: string, deviceType?: DeviceType) {
+    constructor(name?: string, number?: string, inputs?: Input[]) {
         if (name) this.name = name;
         if (number) this.number = number;
-        if (deviceType) this.deviceType = deviceType;
+        if (inputs) this.inputs = inputs;
     }
-
-
-
-
-
+    
 }

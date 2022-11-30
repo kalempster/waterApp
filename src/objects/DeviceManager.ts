@@ -1,7 +1,8 @@
 import { Device } from "./Device";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isEqual } from "lodash";
-import { deviceEmitter } from "./Emitter";
+import { deviceEmitter } from "./DeviceEmitter";
+import { EventEmitter } from "react-native";
 export const DEVICES_KEY_NAME = "devices";
 
 
@@ -64,7 +65,7 @@ export class DeviceManager {
         }
 
         let deviceArray = (JSON.parse(devices) as Device[]);
-        deviceArray = deviceArray.filter((d) => d.name != device.name || d.number != device.number);
+        deviceArray = deviceArray.filter((d) => !isEqual(d, device));
         await this.setDevices(deviceArray);
         deviceEmitter.emit("deviceRemove", device);
     }
@@ -79,11 +80,16 @@ export class DeviceManager {
         }
 
         const deviceArray = (JSON.parse(devices) as Device[]);
-        return deviceArray.find((d) => d.name == device.name && d.number == device.number) ? true : false;
+        return deviceArray.find((d) => isEqual(d, device)) ? true : false;
     }
 
     private static async setDevices(deviceArray: Device[]) {
         await AsyncStorage.setItem(DEVICES_KEY_NAME, JSON.stringify(deviceArray));
+    }
+
+    static async flushDevices() {
+        await AsyncStorage.removeItem(DEVICES_KEY_NAME);
+        deviceEmitter.emit("devicesFlush");
     }
 
 }

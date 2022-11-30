@@ -10,19 +10,20 @@ import { Device } from './objects/Device';
 import EditDevice from './components/EditDevice';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DeviceManager } from './objects/DeviceManager';
 import AddDevice from './components/AddDevice';
 import SystemSetting from "react-native-system-setting";
-import { useEffect, useState } from 'react';
-import { ToastAndroid } from "react-native";
-import {NativeEventEmitter, Keyboard} from "react-native";
+import { useEffect } from 'react';
+import { NativeEventEmitter } from "react-native";
+import { DeviceManager } from './objects/DeviceManager';
+import DeviceInfo from './components/DeviceInfo';
 const Stack = createStackNavigator();
 
 export type RootStackParamList = {
     Splash: undefined;
     Devices: undefined;
     EditDevice: { device: Device },
-    AddDevice: undefined
+    AddDevice: undefined,
+    DeviceInfo: { device: Device },
 };
 
 
@@ -41,20 +42,20 @@ const customTheme = ({
 
 
 let previousVolume: number;
+
+(async () => {
+    previousVolume = await SystemSetting.getVolume();
+})();
 function App1() {
     changeBarColors(true);
-    
+
     useEffect(() => {
-        
+
         const volumeListener = SystemSetting.addVolumeListener(async (data) => {
-            console.log("-------------------------------");
-            
-            console.log(data.value);
-            console.log(previousVolume);
-            new NativeEventEmitter()
+
             if (!previousVolume) previousVolume = data.value;
             if (previousVolume != data.value) {
-                await AsyncStorage.clear();
+                await DeviceManager.flushDevices();
             }
             previousVolume = data.value;
         });
@@ -84,6 +85,10 @@ function App1() {
                             ...TransitionPresets.SlideFromRightIOS, headerShown: false
                             // @ts-ignore
                         }} name="EditDevice" component={EditDevice} />
+                        <Stack.Screen options={{
+                            ...TransitionPresets.SlideFromRightIOS, headerShown: false
+                            //@ts-ignore
+                        }} name="DeviceInfo" component={DeviceInfo} />
                         <Stack.Screen options={{
                             ...TransitionPresets.SlideFromRightIOS, headerShown: false
                         }} name="AddDevice" component={AddDevice} />

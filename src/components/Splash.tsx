@@ -1,8 +1,6 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
-import { StyleSheet, View, Text, Image, ImageStyle, SafeAreaView } from "react-native"
-import { Device } from "../objects/Device";
-import { Props, RootStackParamList } from "../App";
+import { StyleSheet, Image, ImageStyle, SafeAreaView } from "react-native";
+import { Props } from "../App";
 
 
 const Splash = ({ navigation }: Props) => {
